@@ -169,5 +169,6 @@ Stuff/Commands.py
 *.txt
 *.pkl
 *.xlsx
+*.feather
 testfor lib.ipynb
 example.ipynb
