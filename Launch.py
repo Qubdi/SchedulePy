@@ -348,13 +348,7 @@ class Scheduler:
                 # Assign the converted end_date to the job
                 self.job['end_date'] = end_date_local
 
-
-
-                end_date = end_date.astimezone(self.job['time_zone'])
                 print(f"this is job timezone abd end date in untill:\n {self.job['time_zone']}\n {end_date}\n")
-                if end_date < self.job['startdate']:
-                    raise ValueError('Startdate must be earlier than End date')
-                self.job['end_date'] = end_date
                 return self
 
 
