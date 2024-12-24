@@ -52,6 +52,7 @@ class Scheduler:
 
         # Determine the local timezone
         self.local_timezone = datetime.now().astimezone().tzinfo
+        # print(f'FUCKING LOCAL TIMEZONE {self.local_timezone}')
 
         # Parse and convert start_date to local timezone if needed
         if start_date:
@@ -63,6 +64,7 @@ class Scheduler:
 
             # convert to local timezone if different
             if passed_timezone != self.local_timezone:
+                # print(f'I AM IN NOT EQUAL')
                 self.scheduler_startdate = self.passed_start_date.astimezone(self.local_timezone)
             else:
                 self.scheduler_startdate = self.passed_start_date
@@ -70,7 +72,7 @@ class Scheduler:
             # default to current time in the local timezone
             self.scheduler_startdate = datetime.now().replace(microsecond=0).astimezone(self.local_timezone)
 
-        print(f"this is scheduler startdate and timezone inside scheduler class:\n {self.scheduler_timezone}\n{self.scheduler_startdate}\n")
+        # print(f"this is scheduler startdate and timezone inside scheduler class:\n {self.scheduler_timezone}\n{self.scheduler_startdate}\n")
 
         # validating that passed starting date isn't more than current time
         if self.scheduler_startdate.strftime('%Y-%m-%d %H:%M') < datetime.now().strftime('%Y-%m-%d %H:%M'):
@@ -118,7 +120,7 @@ class Scheduler:
             if time_zone is not None
             else self.scheduler_timezone
         )
-        print(f'this is job timezone {job_timezone}')
+        # print(f'this is job timezone {job_timezone}')
 
         # determine the local timezone
         local_timezone = datetime.now().astimezone().tzinfo
@@ -140,7 +142,7 @@ class Scheduler:
             else:
                 job_startdate = self.start_date_with_tz
 
-        print(f"this is job startdate and timezone inside job function: \n{job_timezone}\n{job_startdate}\n")
+        # print(f"this is job startdate and timezone inside job function: \n{job_timezone}\n{job_startdate}\n")
 
         # ensuring that start date isn't in the past
         if job_startdate.strftime('%Y-%m-%d %H:%M') < datetime.now().strftime('%Y-%m-%d %H:%M'):
