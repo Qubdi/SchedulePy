@@ -39,7 +39,16 @@ class Scheduler:
             raise ValueError("Date must be an str format %Y-%m-%d %H:%M")
 
         self.threads = threading   #threading
-        start_date = datetime.strptime(start_date, '%Y-%m-%d %H:%M')
+        # start_date = datetime.strptime(start_date, '%Y-%m-%d %H:%M')
+
+        # Parse start_date or default to the current datetime object
+        self.start_date = (
+            datetime.strptime(start_date, '%Y-%m-%d %H:%M')
+            if start_date
+            else datetime.now().replace(second=0)  # This is a datetime object
+        )
+
+        # print(self.start_date)
 
 
         # timezone of scheduler
@@ -52,17 +61,19 @@ class Scheduler:
 
         # Determine the local timezone
         self.local_timezone = datetime.now().astimezone().tzinfo
+        # print(f'FUCKING LOCAL TIMEZONE {self.local_timezone}')
 
         # Parse and convert start_date to local timezone if needed
-        if start_date:
+        if self.start_date:
             # Parse start_date in the passed timezone
             passed_timezone = self.scheduler_timezone
 
             # uncorvensioned start_date (Passed startdate)
-            self.passed_start_date = start_date.replace(tzinfo=passed_timezone)
+            self.passed_start_date = self.start_date.replace(tzinfo=passed_timezone)
 
             # convert to local timezone if different
             if passed_timezone != self.local_timezone:
+                # print(f'I AM IN NOT EQUAL')
                 self.scheduler_startdate = self.passed_start_date.astimezone(self.local_timezone)
             else:
                 self.scheduler_startdate = self.passed_start_date
@@ -70,7 +81,7 @@ class Scheduler:
             # default to current time in the local timezone
             self.scheduler_startdate = datetime.now().replace(microsecond=0).astimezone(self.local_timezone)
 
-        print(f"this is scheduler startdate and timezone inside scheduler class:\n {self.scheduler_timezone}\n{self.scheduler_startdate}\n")
+        # print(f"this is scheduler startdate and timezone inside scheduler class:\n {self.scheduler_timezone}\n{self.scheduler_startdate}\n")
 
         # validating that passed starting date isn't more than current time
         if self.scheduler_startdate.strftime('%Y-%m-%d %H:%M') < datetime.now().strftime('%Y-%m-%d %H:%M'):
@@ -118,17 +129,23 @@ class Scheduler:
             if time_zone is not None
             else self.scheduler_timezone
         )
-        print(f'this is job timezone {job_timezone}')
+        # print(f'this is job timezone {job_timezone}')
 
         # determine the local timezone
         local_timezone = datetime.now().astimezone().tzinfo
-        start_date = datetime.strptime(start_date, '%Y-%m-%d %H:%M')
+
+        # Parse start_date or default to the current datetime object
+        self.start_date = (
+            datetime.strptime(start_date, '%Y-%m-%d %H:%M')
+            if start_date
+            else self.scheduler_startdate # This is a datetime object
+        )
 
 
         # Parse and convert the job start date
-        if start_date:
+        if self.start_date:
             # Assign the provided timezone to the start_date
-            self.start_date_with_tz = start_date.replace(tzinfo=job_timezone)
+            self.start_date_with_tz = self.start_date.replace(tzinfo=job_timezone)
             # If the job's timezone is different from the local timezone, convert it
             if job_timezone != local_timezone:
                 job_startdate = self.start_date_with_tz.astimezone(local_timezone)
@@ -140,7 +157,7 @@ class Scheduler:
             else:
                 job_startdate = self.start_date_with_tz
 
-        print(f"this is job startdate and timezone inside job function: \n{job_timezone}\n{job_startdate}\n")
+        # print(f"this is job startdate and timezone inside job function: \n{job_timezone}\n{job_startdate}\n")
 
         # ensuring that start date isn't in the past
         if job_startdate.strftime('%Y-%m-%d %H:%M') < datetime.now().strftime('%Y-%m-%d %H:%M'):
