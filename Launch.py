@@ -493,6 +493,7 @@ class Scheduler:
             def run(self, *args, **kwargs):
                 # Wait until jstartdate occurs
                 now = datetime.now().astimezone(timezone.utc).replace(microsecond=0)
+
                 print(f"this is when startdate should be:\n{self.job['startdate']}\nand this is now:\n{now}\n")
                 if now < self.job['startdate']:
                     wait_time = (self.job['startdate'].astimezone(timezone.utc) - now).total_seconds()
