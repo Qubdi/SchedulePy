@@ -47,6 +47,7 @@ class Scheduler:
             if start_date
             else datetime.now().replace(second=0)  # This is a datetime object
         )
+        self.raw_start_date = self.start_date
 
         # print(self.start_date)
 
@@ -138,7 +139,7 @@ class Scheduler:
         self.start_date = (
             datetime.strptime(start_date, '%Y-%m-%d %H:%M')
             if start_date
-            else self.scheduler_startdate # This is a datetime object
+            else self.raw_start_date # This is a datetime object
         )
 
 
