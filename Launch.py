@@ -1,5 +1,5 @@
 import threading
-from datetime import datetime, timezone
+from datetime import datetime, timezone, tzinfo
 from datetime import timedelta
 from datetime import timezone as tzone
 import time
@@ -492,11 +492,11 @@ class Scheduler:
 
             def run(self, *args, **kwargs):
                 # Wait until jstartdate occurs
-                now = datetime.now().astimezone(timezone.utc).replace(microsecond=0)
+                now = datetime.now().replace(microsecond=0)
 
-                print(f"this is when startdate should be:\n{self.job['startdate']}\nand this is now:\n{now}\n")
-                if now < self.job['startdate']:
-                    wait_time = (self.job['startdate'].astimezone(timezone.utc) - now).total_seconds()
+                print(f"this is when startdate should be:\n{self.job['startdate'].replace(tzinfo=None)}\nand this is now:\n{now}\n")
+                if now < self.job['startdate'].replace(tzinfo=None):
+                    wait_time = (self.job['startdate'].replace(tzinfo=None) - now).total_seconds()
                     print(f"waiting for {wait_time}")
                     time.sleep(wait_time)
 
