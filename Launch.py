@@ -357,7 +357,7 @@ class Scheduler:
                 else:
                     end_date_local = end_date_with_tz
 
-                print(f"This is the job's timezone and the converted end date in 'until':\n{self.job['time_zone']}\n{end_date_local}\n")
+                # print(f"This is the job's timezone and the converted end date in 'until':\n{self.job['time_zone']}\n{end_date_local}\n")
 
                 # Ensure the end_date is not earlier than the job's start_date
                 if end_date_local < self.job['startdate']:
@@ -366,7 +366,7 @@ class Scheduler:
                 # Assign the converted end_date to the job
                 self.job['end_date'] = end_date_local
 
-                print(f"this is job timezone abd end date in untill:\n {self.job['time_zone']}\n {end_date}\n")
+                # print(f"this is job timezone abd end date in untill:\n {self.job['time_zone']}\n { self.job['end_date']}\n")
                 return self
 
 
@@ -485,7 +485,7 @@ class Scheduler:
                     self.job['next_run'] = next_run
                 else:
                     raise ValueError("Unsupported unit. Please extend the `calculate_next_run` method to support other units.")
-                print(f"calc next run: {self.job['next_run']}")
+                # print(f"calc next run: {self.job['next_run']}")
 
                 return self.job['next_run']
 
@@ -494,10 +494,10 @@ class Scheduler:
                 # Wait until jstartdate occurs
                 now = datetime.now().replace(microsecond=0)
 
-                print(f"this is when startdate should be:\n{self.job['startdate'].replace(tzinfo=None)}\nand this is now:\n{now}\n")
+                # print(f"this is when startdate should be:\n{self.job['startdate'].replace(tzinfo=None)}\nand this is now:\n{now}\n")
                 if now < self.job['startdate'].replace(tzinfo=None):
                     wait_time = (self.job['startdate'].replace(tzinfo=None) - now).total_seconds()
-                    print(f"waiting for {wait_time}")
+                    # print(f"waiting for {wait_time}")
                     time.sleep(wait_time)
 
                 # Check if end date is today and at time is in the past
@@ -544,8 +544,9 @@ class Scheduler:
                             # handles important termination conditions for the job,
                             # ensuring it stops executing under specific circumstances
                             finally:
-                                self.job['repeat_count'] += 1
+                                # self.job['repeat_count'] += 1
                                 now = datetime.now().astimezone().replace(microsecond=0)
+                                # print(f'final calcnexttrun')
                                 next_run_time = self.calculate_next_run(now)
 
                                 if self.job['end_date'] and next_run_time > self.job['end_date']:
@@ -558,9 +559,9 @@ class Scheduler:
                                     print('in mid break')
                                     break
 
-                                if self.job['repeats'] is not None and self.job['end_date'] is None and self.job['repeat_count']   > self.job['repeats']:
-                                    print(self.job['repeat_count'])
-                                    print('repeatbreak?')
+                                if self.job['repeats'] is not None and self.job['end_date'] is None and self.job['repeat_count'] >= self.job['repeats']:
+                                    # print(self.job['repeat_count'])
+                                    # print('repeatbreak?')
                                     break
 
                             # overwriting on now variable so we can define it as the time when function ends running /
