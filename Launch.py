@@ -228,24 +228,46 @@ class Scheduler:
                 every : Sets the job to run every specified number of seconds.
                 """
 
+                if every is not None and isinstance(every, str):
+                    raise ValueError("Passed argument must be a positive integer")
+                if every is not None and every<0:
+                    raise ValueError("Passed argument must be a positive integer")
+
                 self.job['unit'] = 'second'  # time unit for the job
                 self.job['interval'] = every # interval
                 return self
 
             def minute(self, every=1):
                 """Set the job to run every `every` minutes."""
+
+                if every is not None and isinstance(every, str):
+                    raise ValueError("Passed argument must be a positive integer")
+                if every is not None and every<0:
+                    raise ValueError("Passed argument must be a positive integer")
                 self.job['unit'] = 'minute'
                 self.job['interval'] = every
                 return self
 
             def hour(self, every=1):
                 """Set the job to run every `every` hours."""
+
+                if every is not None and isinstance(every, str):
+                    raise ValueError("Passed argument must be a positive integer")
+                if every is not None and every<0:
+                    raise ValueError("Passed argument must be a positive integer")
+
                 self.job['unit'] = 'hour'
                 self.job['interval'] = every
                 return self
 
             def day(self, every=1, hour=None):
                 """Set the job to run every `every` days, optionally at a specific time."""
+
+                if every is not None and isinstance(every, str):
+                    raise ValueError("Passed argument must be a positive integer")
+                if every is not None and every<0:
+                    raise ValueError("Passed argument must be a positive integer")
+
                 self.job['unit'] = 'day'
                 self.job['interval'] = every
                 self.job['at'] = hour
@@ -265,6 +287,12 @@ class Scheduler:
                 hour : str
                     Time in HH:MM format at which the job should run.
                 """
+
+                if every is not None and isinstance(every, str):
+                    raise ValueError("Passed argument must be a positive integer")
+                if every is not None and every<0:
+                    raise ValueError("Passed argument must be a positive integer")
+
                 if  week_day and  type(week_day) != int and type(week_day)!=list:
                     raise ValueError("Weekday must be an integer or a list of integers")
                 elif week_day and isinstance(week_day, list):
@@ -288,7 +316,7 @@ class Scheduler:
                 # passed week days are saved in list then turned into sets to avoid repeating values without raising errror
                 # then sets are once again turned into lists
                 self.job['week_day'] = [datetime.today().weekday()] if week_day is None else [week_day] if isinstance(week_day, int) else list(set(week_day))
-                print( self.job['week_day'])
+                # print( self.job['week_day'])
                 # defining at what hour of the day code should run
                 self.job['at'] = hour
                 return self
@@ -306,6 +334,12 @@ class Scheduler:
                 hour : str
                     Time in HH:MM format at which the job should run.
                 """
+
+                if every is not None and isinstance(every, str):
+                    raise ValueError("Passed argument must be a positive integer")
+                if every is not None and every<0:
+                    raise ValueError("Passed argument must be a positive integer")
+
                 self.job['unit'] = 'month'
                 self.job['interval'] = every
                 self.job['on_day'] = day
@@ -327,6 +361,12 @@ class Scheduler:
                 hour : str
                     Time in HH:MM format at which the job should run.
                 """
+
+                if every is not None and isinstance(every, str):
+                    raise ValueError("Passed argument must be a positive integer")
+                if every is not None and every<0:
+                    raise ValueError("Passed argument must be a positive integer")
+
                 self.job['unit'] = 'year'
                 self.job['interval'] = every
                 self.job['on_month'] = month
