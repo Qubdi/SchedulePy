@@ -416,8 +416,14 @@ class Scheduler:
                 return self
 
             def calculate_next_run(self, current_time):
-                # Truncate the current_time to remove milliseconds
-                current_time = current_time.replace(microsecond=0)
+                job_tzone = self.job['time_zone']  # Default to the job's timezone
+                # local_timezone = datetime.now().astimezone().tzinfo
+                # current_time = current_time.replace(microsecond=0)
+                current_time = current_time.replace(tzinfo=job_tzone, microsecond=0)
+
+                # print(self.job)
+                # original_timezone = timezone(timedelta(seconds=self.job['time_zone']))
+                # current_time = current_time.replace(tzinfo=original_timezone)
 
                 if self.job['unit'] == 'second':
                     self.job['next_run'] = current_time + timedelta(seconds=self.job['interval'])
