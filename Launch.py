@@ -417,9 +417,11 @@ class Scheduler:
 
             def calculate_next_run(self, current_time):
                 job_tzone = self.job['time_zone']  # Default to the job's timezone
-                # local_timezone = datetime.now().astimezone().tzinfo
+                local_timezone = datetime.now().astimezone().tzinfo
                 # current_time = current_time.replace(microsecond=0)
                 current_time = current_time.replace(tzinfo=job_tzone, microsecond=0)
+                current_time = current_time.astimezone(local_timezone)
+                print(f'this is current time {current_time}')
 
                 # print(self.job)
                 # original_timezone = timezone(timedelta(seconds=self.job['time_zone']))
