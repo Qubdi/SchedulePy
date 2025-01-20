@@ -421,7 +421,7 @@ class Scheduler:
                 # current_time = current_time.replace(microsecond=0)
                 current_time = current_time.replace(tzinfo=job_tzone, microsecond=0)
                 current_time = current_time.astimezone(local_timezone)
-                print(f'this is current time {current_time}')
+                # print(f'this is current time {current_time}')
 
                 # print(self.job)
                 # original_timezone = timezone(timedelta(seconds=self.job['time_zone']))
