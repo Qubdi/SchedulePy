@@ -423,9 +423,6 @@ class Scheduler:
                 current_time = current_time.astimezone(local_timezone)
                 # print(f'this is current time {current_time}')
 
-                # print(self.job)
-                # original_timezone = timezone(timedelta(seconds=self.job['time_zone']))
-                # current_time = current_time.replace(tzinfo=original_timezone)
 
                 if self.job['unit'] == 'second':
                     self.job['next_run'] = current_time + timedelta(seconds=self.job['interval'])
@@ -433,7 +430,7 @@ class Scheduler:
                     current_time = current_time.replace(second=0)
                     self.job['next_run'] = current_time + timedelta(minutes=self.job['interval'])
                 elif self.job['unit'] == 'hour':
-                    current_time = current_time.replace(minute=0, second=0)
+                    current_time = current_time.replace(second=0, microsecond=0)
                     self.job['next_run'] = current_time + timedelta(hours=self.job['interval'])
                 elif self.job['unit'] == 'day':
                     # Handling the 'at' parameter for the day interval
@@ -450,6 +447,7 @@ class Scheduler:
                         # Default behavior without 'at' attribute
                         current_time = current_time.replace(hour=0, minute=0, second=0)
                         self.job['next_run'] = current_time + timedelta(days=self.job['interval'])
+                        print(f'disis day next run {self.job["next_run"]}')
                 elif self.job['unit'] == 'week':
                     # Set up the initial next run time based on the current time and interval
                     runlist = []
@@ -458,7 +456,7 @@ class Scheduler:
                     # Default to current weekday if no week_day is specified
                     weekdays = self.job['week_day'] if self.job['week_day'] else [current_time.weekday()]
                     for day in weekdays:
-                        print( current_time.weekday(),day)
+                        print(current_time.weekday(),day)
                         days_difference = current_time.weekday() - day
                         next_run = next_run - timedelta(days=days_difference)
                         print(next_run)
