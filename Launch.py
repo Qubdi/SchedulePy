@@ -261,7 +261,33 @@ class Scheduler:
                 return self
 
             def day(self, every=1, hour=None):
-                """Set the job to run every `every` days, optionally at a specific time."""
+                """
+                Schedules the job to run at a specified interval of days, with an optional specific time.
+
+                Parameters:
+                - `every` (int, optional): The interval in days at which the job should run.
+                  - Must be a positive integer.
+                  - Defaults to `1`, meaning the job will run daily.
+                  - If a non-integer or a negative value is passed, a `ValueError` is raised.
+                - `hour` (str, optional): The specific time at which the job should run each scheduled day.
+                  - Must be in the format `"HH:MM"` (24-hour format).
+                  - If provided, the function adjusts the time based on the job's original time zone.
+                  - If omitted, the job runs at a system-determined default time.
+
+                Time Zone Handling:
+                - If the job's configured time zone (`job['time_zone']`) differs from the local system's time zone,
+                  the specified `hour` is first interpreted as a time in the job's original time zone.
+                - The function then converts this time to the system's local time zone before storing it.
+                - This ensures that the scheduled job runs at the correct local equivalent of the originally specified time.
+                - If `hour` is not provided or if the job's time zone matches the system's local time zone,
+                  the `hour` is stored as is without conversion.
+
+                Example Usage:
+                ```python
+                scheduler.day(every=2, hour="14:30")  # Runs every 2 days at 2:30 PM, adjusting for time zone differences
+                scheduler.day(every=1)  # Runs daily at a system-defined default time
+                ```
+                """
 
                 if every is not None and isinstance(every, str):
                     raise ValueError("Passed argument must be a positive integer")
@@ -270,7 +296,19 @@ class Scheduler:
 
                 self.job['unit'] = 'day'
                 self.job['interval'] = every
-                self.job['at'] = hour
+
+                local_timezone = datetime.now().astimezone().tzinfo  # for later comparison
+
+                # checking the logics when there is hour present and timezones are different
+                if job['time_zone'] != local_timezone and hour is not None:
+                    runtime_asdt = datetime.strptime(hour, "%H:%M")  # convert passed time to datetime
+                    runtime_asdt = runtime_asdt.replace(tzinfo=job['time_zone'])  # applying original timezone
+                    updated_hour = runtime_asdt.astimezone(local_timezone)  # converting to local timezone
+                    updated_hour = updated_hour.strftime("%H:%M")  # removing the date part of the object and leaving only hours:minutes
+                    self.job['at'] = updated_hour
+                else:
+                    self.job['at'] = hour
+
                 return self
 
             def week(self, every=1, week_day=None, hour=None):
