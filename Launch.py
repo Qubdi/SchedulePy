@@ -353,8 +353,12 @@ class Scheduler:
 
                 # passed week days are saved in list then turned into sets to avoid repeating values without raising errror
                 # then sets are once again turned into lists
-                self.job['week_day'] = [datetime.today().weekday()] if week_day is None else [week_day] if isinstance(week_day, int) else list(set(week_day))
-                # print( self.job['week_day'])
+                self.job['kwargs']['week_day'] = (
+                    [datetime.today().weekday()]
+                    if week_day is None
+                    else [week_day] if isinstance(week_day, int)
+                    else list(set(week_day))
+)                # print( self.job['week_day'])
                 # defining at what hour of the day code should run
                 self.job['at'] = hour
                 return self
