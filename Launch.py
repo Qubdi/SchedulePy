@@ -382,6 +382,16 @@ class Scheduler:
                 if every is not None and every<0:
                     raise ValueError("Passed argument must be a positive integer")
 
+                if day is not None:
+                    if not isinstance(day, int) or day < 1 or day > 31:
+                        raise ValueError("Parameter 'day' must be an integer between 1 and 31.")
+
+                    # Get current year and month (or use a custom reference if needed)
+                    now = datetime.now()
+                    max_day = calendar.monthrange(now.year, now.month)[1]
+
+                    if day > max_day:
+                        day = max_day  # Auto-adjust to last day of current month
                 self.job['unit'] = 'month'
                 self.job['interval'] = every
                 self.job['on_day'] = day
