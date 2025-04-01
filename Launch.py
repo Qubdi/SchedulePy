@@ -312,6 +312,9 @@ class Scheduler:
                 else:
                     self.job['at'] = hour
 
+
+
+
                 return self
 
             def week(self, every=1, week_day=None, hour=None):
