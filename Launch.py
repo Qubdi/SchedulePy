@@ -306,8 +306,14 @@ class Scheduler:
                     updated_hour = runtime_asdt.astimezone(local_timezone)  # converting to local timezone
                     updated_hour = updated_hour.strftime("%H:%M")  # removing the date part of the object and leaving only hours:minutes
                     self.job['at'] = updated_hour
+                elif hour is None:
+                    time_str = job['startdate'].strftime('%H:%M')
+                    self.job['at'] = time_str
                 else:
                     self.job['at'] = hour
+
+
+
 
                 return self
 
@@ -354,13 +360,27 @@ class Scheduler:
                 # passed week days are saved in list then turned into sets to avoid repeating values without raising errror
                 # then sets are once again turned into lists
                 self.job['kwargs']['week_day'] = (
-                    [datetime.today().weekday()]
+                    [job['startdate'].weekday()]
                     if week_day is None
                     else [week_day] if isinstance(week_day, int)
-                    else list(set(week_day))
-)                # print( self.job['week_day'])
+                    else list(set(week_day)))
                 # defining at what hour of the day code should run
-                self.job['at'] = hour
+                # self.job['at'] = hour
+                local_timezone = datetime.now().astimezone().tzinfo  # for later comparison
+
+                # checking the logics when there is hour present and timezones are different
+                if job['time_zone'] != local_timezone and hour is not None:
+                    runtime_asdt = datetime.strptime(hour, "%H:%M")  # convert passed time to datetime
+                    runtime_asdt = runtime_asdt.replace(tzinfo=job['time_zone'])  # applying original timezone
+                    updated_hour = runtime_asdt.astimezone(local_timezone)  # converting to local timezone
+                    updated_hour = updated_hour.strftime("%H:%M")  # removing the date part of the object and leaving only hours:minutes
+                    self.job['at'] = updated_hour
+                elif hour is None:
+                    time_str = job['startdate'].strftime('%H:%M')
+                    self.job['at'] = time_str
+                else:
+                    self.job['at'] = hour
+
                 return self
 
             def month(self, every=1, day=None, hour=None):
