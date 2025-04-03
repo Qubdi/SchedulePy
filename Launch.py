@@ -360,7 +360,7 @@ class Scheduler:
                 # passed week days are saved in list then turned into sets to avoid repeating values without raising errror
                 # then sets are once again turned into lists
                 self.job['kwargs']['week_day'] = (
-                    [datetime.today().weekday()]
+                    [job['startdate'].weekday()]
                     if week_day is None
                     else [week_day] if isinstance(week_day, int)
                     else list(set(week_day)))
@@ -375,6 +375,9 @@ class Scheduler:
                     updated_hour = runtime_asdt.astimezone(local_timezone)  # converting to local timezone
                     updated_hour = updated_hour.strftime("%H:%M")  # removing the date part of the object and leaving only hours:minutes
                     self.job['at'] = updated_hour
+                elif hour is None:
+                    time_str = job['startdate'].strftime('%H:%M')
+                    self.job['at'] = time_str
                 else:
                     self.job['at'] = hour
 
