@@ -414,8 +414,25 @@ class Scheduler:
                         day = max_day  # Auto-adjust to last day of current month
                 self.job['unit'] = 'month'
                 self.job['interval'] = every
-                self.job['on_day'] = day
-                self.job['at'] = hour
+                
+                if day is None:
+                    self.job['on_day'] = self.job['startdate'].day
+                else:
+                    self.job['on_day'] = day
+
+                # checking the logics when there is hour present and timezones are different
+                if job['time_zone'] != local_timezone and hour is not None:
+                    runtime_asdt = datetime.strptime(hour, "%H:%M")  # convert passed time to datetime
+                    runtime_asdt = runtime_asdt.replace(tzinfo=job['time_zone'])  # applying original timezone
+                    updated_hour = runtime_asdt.astimezone(local_timezone)  # converting to local timezone
+                    updated_hour = updated_hour.strftime("%H:%M")  # removing the date part of the object and leaving only hours:minutes
+                    self.job['at'] = updated_hour
+                elif hour is None:
+                    time_str = job['startdate'].strftime('%H:%M')
+                    self.job['at'] = time_str
+                else:
+                    self.job['at'] = hour
+
                 return self
 
             def year(self, every=1, month=None, day=None, hour=None):
