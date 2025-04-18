@@ -455,12 +455,39 @@ class Scheduler:
                     raise ValueError("Passed argument must be a positive integer")
                 if every is not None and every<0:
                     raise ValueError("Passed argument must be a positive integer")
+                if day is not None:
+                    if not isinstance(day, int) or day < 1 or day > 31:
+                        raise ValueError("Parameter 'day' must be an integer between 1 and 31.")
+                if month is not None:
+                    if not isinstance(month, int) or month < 1 or month > 12:
+                        raise ValueError("Parameter 'month' must be an integer between 1 and 12.")
 
                 self.job['unit'] = 'year'
                 self.job['interval'] = every
-                self.job['on_month'] = month
-                self.job['on_day'] = day
-                self.job['at'] = hour
+
+                if month is None:
+                    self.job['on_month'] = self.job['startdate'].month
+                else:
+                    self.job['on_month'] = month
+
+                if day is None:
+                    self.job['on_day'] = self.job['startdate'].day
+                else:
+                    self.job['on_day'] = day
+
+                # checking the logics when there is hour present and timezones are different
+                if job['time_zone'] != local_timezone and hour is not None:
+                    runtime_asdt = datetime.strptime(hour, "%H:%M")  # convert passed time to datetime
+                    runtime_asdt = runtime_asdt.replace(tzinfo=job['time_zone'])  # applying original timezone
+                    updated_hour = runtime_asdt.astimezone(local_timezone)  # converting to local timezone
+                    updated_hour = updated_hour.strftime("%H:%M")  # removing the date part of the object and leaving only hours:minutes
+                    self.job['at'] = updated_hour
+                elif hour is None:
+                    time_str = job['startdate'].strftime('%H:%M')
+                    self.job['at'] = time_str
+                else:
+                    self.job['at'] = hour
+
                 return self
 
             def do(self, func, name):
