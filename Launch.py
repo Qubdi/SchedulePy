@@ -554,16 +554,12 @@ class Scheduler:
                         # Parse the 'at' time from the job settings
                         hour, minute = map(int, self.job['at'].split(':'))
                         next_run = current_time.replace(hour=hour, minute=minute, second=0, microsecond=0)
-
-                        # Ensure next_run is set on the correct day interval
-                        if next_run <= current_time:
-                            next_run += timedelta(days=self.job['interval'])
+                        next_run += timedelta(days=self.job['interval'])
                         self.job['next_run'] = next_run
-                    else:
-                        # Default behavior without 'at' attribute
-                        current_time = current_time.replace(hour=0, minute=0, second=0)
-                        self.job['next_run'] = current_time + timedelta(days=self.job['interval'])
-                        print(f'disis day next run {self.job["next_run"]}')
+                    # else:
+                    #     # Default behavior without 'at' attribute
+                    #     current_time = current_time.replace(hour=0, minute=0, second=0)
+                    #     self.job['next_run'] = current_time + timedelta(days=self.job['interval'])
                 elif self.job['unit'] == 'week':
                     # Set up the initial next run time based on the current time and interval
                     runlist = []
