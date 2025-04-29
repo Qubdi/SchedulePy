@@ -554,41 +554,21 @@ class Scheduler:
                         # Parse the 'at' time from the job settings
                         hour, minute = map(int, self.job['at'].split(':'))
                         next_run = current_time.replace(hour=hour, minute=minute, second=0, microsecond=0)
-
-                        # Ensure next_run is set on the correct day interval
-                        if next_run <= current_time:
-                            next_run += timedelta(days=self.job['interval'])
+                        next_run += timedelta(days=self.job['interval'])
                         self.job['next_run'] = next_run
-                    else:
-                        # Default behavior without 'at' attribute
-                        current_time = current_time.replace(hour=0, minute=0, second=0)
-                        self.job['next_run'] = current_time + timedelta(days=self.job['interval'])
-                        print(f'disis day next run {self.job["next_run"]}')
                 elif self.job['unit'] == 'week':
                     # Set up the initial next run time based on the current time and interval
                     runlist = []
                     next_run = current_time + timedelta(weeks=self.job['interval'])
-                    print(f'Added next run{next_run.weekday()}')
                     # Default to current weekday if no week_day is specified
-                    weekdays = self.job['week_day'] if self.job['week_day'] else [current_time.weekday()]
+                    weekdays = self.job['kwargs']['week_day'] if self.job['kwargs']['week_day'] else [current_time.weekday()]
                     for day in weekdays:
-                        print(current_time.weekday(),day)
                         days_difference = current_time.weekday() - day
-                        next_run = next_run - timedelta(days=days_difference)
-                        print(next_run)
 
-                        if 'at' in self.job and self.job['at']:
-                            hour, minute = map(int, self.job['at'].split(':'))
-                            next_run = next_run.replace(hour=hour, minute=minute, second=0, microsecond=0)
+                        hour, minute = map(int, self.job['at'].split(':'))
 
-                        # If the next run time is in the past, add the weekly interval
-                        if next_run <= current_time:
-                            next_run += timedelta(weeks=self.job['interval'])
-
-                        runlist.append(next_run)
-                        next_run = current_time + timedelta(weeks=self.job['interval'])
-
-                    self.job['next_run'] = min(runlist)
+                        next_run = (next_run - timedelta(days=days_difference)).replace(hour=hour, minute=minute, second=0, microsecond=0)
+                    self.job['next_run'] = next_run
                 elif self.job['unit'] == 'month':
                     # Handle the 'on_day' parameter
                     day = self.job.get('on_day') or current_time.day
@@ -758,3 +738,5 @@ class Scheduler:
                 job.run()
 
 
+
+#%%
